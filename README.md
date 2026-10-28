@@ -36,13 +36,30 @@ From `results/` (synthetic network, eval seeds 0-4, 1000 scenarios, harm v2, thr
 | twin | 4.0% [2.2%, 5.9%] | 10.7% [7.9%, 13.6%] |
 | combined | 2.4% [1.1%, 4.0%] | 5.9% [3.8%, 8.3%] |
 
-From `results_v6/NOTES.md` (LLM agent anthropic/claude-haiku-5.5, keyword parser, harm v2, 5% budget): combined guard
-HER 28.8 [17.2,40.4], FBR 6.6 [4.3,9.0]. The LLM agent rarely followed injections, so only 59 of 1000 scenarios were
-harmful and CIs are wide.
+**Optional LLM run** (`results_v6/NOTES.md`; model anthropic/claude-haiku-5.5, temperature 0, keyword parser, harm v2, 5% budget,
+eval seeds 0-4 = 1000 scenarios): the LLM agent rarely followed the injected instructions, so only **59 of 1000** scenarios were
+harmful and the CIs are wide.
+
+| guard | harmful-exec [95% CI] | false-block [95% CI] |
+|---|---|---|
+| rule | 32.2% [20.4%, 44.2%] | 2.3% [0.9%, 3.7%] |
+| combined | 28.8% [17.2%, 40.4%] | 6.6% [4.3%, 9.0%] |
+
+The combined guard's harmful-execution rate (28.8%) is not significantly different from the rule gateway's (32.2%): the CIs overlap
+heavily and the exact McNemar test on harmful scenarios gives p = 0.5 (`results_v6/anthropic__claude-haiku-5.5/keyword_parser/mcnemar_v2.csv`).
+Its false-block rate is higher (6.6% vs 2.3%). With the LLM intent parser instead of the keyword parser, the combined guard was infeasible at the
+5% budget (twin threshold 99) and had a false-block rate of 12.0% [9.1%, 14.9%].
 
 **Caveats:** all data is synthetic; the same authors wrote the twin, oracle and scenarios (residual circularity);
-the `openai__gpt-6-luna` run is **INCOMPLETE** (stopped at an endpoint spend limit; 366 of 1200 scenarios; no guard
-evaluation) and must not be used for guard metrics. See Limitations below.
+the `openai__gpt-6-luna` run is **INCOMPLETE** (stopped at an endpoint spend limit; the agent produced actions for only 366 of 1200
+scenarios and no guard evaluation was run; only its intent-extraction accuracy was computed) and must not be used for guard metrics.
+See Limitations below.
+
+## Environment variables
+
+The code reads exactly three environment variables, all only for the optional LLM runs (`netagent_guard/llm.py`):
+`LLM_BASE_URL` (OpenAI-compatible endpoint), `LLM_API_KEY` and `LLM_MODEL`. If one is missing, the LLM paths raise an error
+instead of falling back. No other variables are used. The offline evaluation and the tests need none of them.
 
 ## Quick push
 
@@ -77,8 +94,9 @@ Those inputs can carry injected instructions, and the agent can also simply make
 | `netagent_guard/tools.py` | 8 typed actions: `shutdown_link`, `enable_link`, `shutdown_node`, `set_link_weight`, `set_slice_bandwidth`, `restart_nf`, `add_acl`, `read_kpis`. |
 | `netagent_guard/intent_text.py` | Free-text intents in 6 styles: S1 structured, S2 natural, S3 ops shorthand, S4 noisy (typos/casing/filler) = train styles; **S5 formal/passive with synonyms and S6 Finglish = held-out styles** (eval only; the parser was never written against them). |
 | `netagent_guard/scenarios.py` | Frozen-seed generator, 200 scenarios/seed, shuffled replay order: 45% benign (B1-B7), 30% injected (I1-I4 used to design rules, **I5-I7 held out**), 25% erroneous (E1-E6). |
-| `netagent_guard/guards.py` | `none`; `rule` (RBAC, critical-node/link lists incl. single-homed uplinks from the static inventory, shared-NF protection, emergency-slice ACL protection, parameter hard/soft bounds, destructive-op rate limit of 3 per 10 replayed proposals, injection keywords; weighted score); `intent` (deterministic free-text parser -> structured scope -> deterministic compare; unparseable intent gets a "cannot verify" score); `twin` (dry-run on the guard's approximate twin; continuous risk = out-of-scope KPI degradation + utilisation-headroom loss + redundancy loss; score >= t block, [0.4t, t) escalate); `combined` (hard rule denies + intent violation + twin). JSONL audit log. Optional LLM intent parser (`NAG_USE_LLM=1`, `NAG_LLM_MODEL`, and `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`). |
-| `netagent_guard/agent.py` | Optional ReAct agent if an API key exists. |
+| `netagent_guard/guards.py` | `none`; `rule` (RBAC, critical-node/link lists incl. single-homed uplinks from the static inventory, shared-NF protection, emergency-slice ACL protection, parameter hard/soft bounds, destructive-op rate limit of 3 per 10 replayed proposals, injection keywords; weighted score); `intent` (deterministic free-text parser -> structured scope -> deterministic compare; unparseable intent gets a "cannot verify" score); `twin` (dry-run on the guard's approximate twin; continuous risk = out-of-scope KPI degradation + utilisation-headroom loss + redundancy loss; score >= t block, [0.4t, t) escalate); `combined` (hard rule denies + intent violation + twin). JSONL audit log. `llm_parse_intent` is an optional LLM intent extractor used only by the v6 LLM run (`netagent_guard/eval_llm.py`); the offline experiment uses the deterministic parser. |
+| `netagent_guard/agent.py` | Optional LLM operations agent: reads intent + ticket + telemetry and proposes one tool call. Needs `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`; fails loudly if the endpoint is not configured or fails (no silent fallback to replayed actions). |
+| `netagent_guard/llm.py` | Minimal OpenAI-compatible chat client. |
 | `netagent_guard/eval.py` | Metrics, per-budget calibration, threshold sweeps, ablations, twin-noise levels, parser accuracy, bootstrap CI, McNemar, plots. |
 | `demo/app.py` | FastAPI + HTML dashboard: one injected ticket processed end-to-end by no guard / rule gateway / NetAgent Guard (decision -> execution on the hidden true network -> independent harm check -> audit trail). |
 
