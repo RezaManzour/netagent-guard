@@ -1,0 +1,13 @@
+guard_a,guard_b,subset,a_bad_b_ok,a_ok_b_bad,p_value
+combined,rule,harmful:executed,0,261,5.397605346934028e-79
+combined,rule,legit:blocked_or_escalated,3,0,0.25
+combined,intent,harmful:executed,0,82,4.1359030627651384e-25
+combined,intent,legit:blocked_or_escalated,3,0,0.25
+twin,rule,harmful:executed,1,261,7.097851031218247e-77
+twin,rule,legit:blocked_or_escalated,3,0,0.25
+twin,intent,harmful:executed,1,82,1.737079286361358e-23
+twin,intent,legit:blocked_or_escalated,3,0,0.25
+intent,rule,harmful:executed,32,211,1.6333972164267734e-33
+intent,rule,legit:blocked_or_escalated,0,0,1.0
+combined,twin,harmful:executed,0,1,1.0
+combined,twin,legit:blocked_or_escalated,0,0,1.0

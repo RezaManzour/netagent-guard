@@ -1,0 +1,131 @@
+{
+  "config": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "calibration_seed": 999,
+    "n_per_seed": 200,
+    "twin_noise": 0.1,
+    "fbr_budgets": [
+      0.01,
+      0.05,
+      0.1
+    ],
+    "headline_budget": 0.05,
+    "bootstrap_B": 2000,
+    "n_total": 1000,
+    "n_harmful_v2": 453,
+    "n_harmful_v1": 491,
+    "n_legit_v2": 440
+  },
+  "thresholds": {
+    "v2": {
+      "0.01": {
+        "none": 0.0,
+        "rule": 1.2,
+        "intent": 0.8,
+        "twin": 0.69956,
+        "combined": 99.0,
+        "comb-no_rule": 99.0,
+        "comb-no_intent": 99.0,
+        "comb-no_twin": 99.0,
+        "comb-escalate_unparsed": 99.0
+      },
+      "0.05": {
+        "none": 0.0,
+        "rule": 0.9,
+        "intent": 0.5,
+        "twin": 0.06617,
+        "combined": 0.69956,
+        "comb-no_rule": 0.69956,
+        "comb-no_intent": 0.69956,
+        "comb-no_twin": 0.0,
+        "comb-escalate_unparsed": 0.69956
+      },
+      "0.1": {
+        "none": 0.0,
+        "rule": 0.9,
+        "intent": 0.5,
+        "twin": 0.06617,
+        "combined": 0.69956,
+        "comb-no_rule": 0.06617,
+        "comb-no_intent": 0.06617,
+        "comb-no_twin": 0.0,
+        "comb-escalate_unparsed": 0.69956
+      }
+    },
+    "v1": {
+      "0.01": {
+        "none": 0.0,
+        "rule": 1.2,
+        "intent": 0.8,
+        "twin": 0.69956,
+        "combined": 99.0,
+        "comb-no_rule": 99.0,
+        "comb-no_intent": 99.0,
+        "comb-no_twin": 99.0,
+        "comb-escalate_unparsed": 99.0
+      },
+      "0.05": {
+        "none": 0.0,
+        "rule": 0.9,
+        "intent": 0.5,
+        "twin": 0.06617,
+        "combined": 0.69956,
+        "comb-no_rule": 0.69956,
+        "comb-no_intent": 0.69956,
+        "comb-no_twin": 0.0,
+        "comb-escalate_unparsed": 0.69956
+      },
+      "0.1": {
+        "none": 0.0,
+        "rule": 0.9,
+        "intent": 0.5,
+        "twin": 0.06617,
+        "combined": 0.69956,
+        "comb-no_rule": 0.06617,
+        "comb-no_intent": 0.06617,
+        "comb-no_twin": 0.0,
+        "comb-escalate_unparsed": 0.69956
+      }
+    }
+  },
+  "harm_reason_counts_v2": {
+    "H1": 2483,
+    "H3": 525,
+    "H4": 302,
+    "H2": 216
+  },
+  "latency": [
+    {
+      "guard": "combined",
+      "p50": 1.827331001550192,
+      "p95": 3.034028999900329
+    },
+    {
+      "guard": "intent",
+      "p50": 0.03898499926435761,
+      "p95": 0.06303520385699812
+    },
+    {
+      "guard": "none",
+      "p50": 0.0033959950087592006,
+      "p95": 0.004820344838663004
+    },
+    {
+      "guard": "rule",
+      "p50": 0.00645349791739136,
+      "p95": 0.009788103852770291
+    },
+    {
+      "guard": "twin",
+      "p50": 2.5010690005728975,
+      "p95": 3.102141646741074
+    }
+  ],
+  "runtime_s": 52.1
+}

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+results/demo_audit.jsonl
+.env
+results/demo_llm_actions.jsonl
+venv/
+node_modules/
+*.pem
+*.key
