@@ -132,6 +132,17 @@ make all            # = python run_all.py : tests, full eval, plots, README tabl
 make demo           # = uvicorn demo.app:app --port 8000 -> http://127.0.0.1:8000
 ```
 
+## Regenerate the summary tables (no new experiments)
+```bash
+python scripts/make_tables.py                      # print the tables to stdout
+python scripts/make_tables.py --output tables.md   # or write them to a file
+python scripts/make_tables.py --no-v6              # offline tables only; identical to results/tables.md
+make tables                                        # same as the first command
+```
+The script only reads the CSV/JSON files already in `results/`, `results_mvp1/` and `results_v6/` and renders markdown: the offline
+tables (the same ones `run_all.py` inserts below) plus a summary of the optional LLM-agent run in `results_v6/`. It runs no
+evaluation and makes no LLM or network call. `tests/test_make_tables.py` is a smoke test for it.
+
 ## Results
 All numbers below are inserted automatically from `results/` by `netagent_guard/report.py`.
 
