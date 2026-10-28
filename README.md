@@ -1,6 +1,6 @@
 # NetAgent Guard — AI in Telecom competition project
 
-[![tests](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue)
+[![tests](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue) [![License](https://img.shields.io/github/license/RezaManzour/netagent-guard)](LICENSE)
 
 NetAgent Guard is our entry to the **AI in Telecom** competition: a safety layer that gates every action an LLM
 network-operations agent proposes (rule gateway, intent check, digital-twin consequence check, combined guard),
