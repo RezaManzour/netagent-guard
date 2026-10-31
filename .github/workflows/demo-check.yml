@@ -1,0 +1,52 @@
+name: demo-check
+
+on:
+  push:
+    branches: [demo-check]
+  workflow_dispatch:
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Unit tests
+        run: python -m pytest -q
+      - name: Start demo
+        run: |
+          nohup python -m uvicorn demo.app:app --port 8000 > demo.log 2>&1 &
+          for i in $(seq 1 90); do
+            curl -sf http://127.0.0.1:8000/ > /dev/null && echo "demo up after $i s" && exit 0
+            sleep 1
+          done
+          echo "demo did not start"; cat demo.log; exit 1
+      - name: Screenshot
+        run: |
+          cat > shot.py <<'PY'
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1400, "height": 900})
+              pg.goto("http://127.0.0.1:8000/"); pg.wait_for_timeout(20000)
+              pg.screenshot(path="demo.png", full_page=True)
+              txt = pg.inner_text("body"); print(txt[:1500])
+              assert "Traceback" not in txt and "Error" not in txt.split("\n")[0], "error shown on page"
+          PY
+          python shot.py
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-check
+          path: |
+            demo.png
+            demo.log
