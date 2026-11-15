@@ -1,29 +1,15 @@
-# NetAgent Guard — AI in Telecom competition project
+# NetAgent Guard
 
-[![tests](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml) ![Python 3.11](https://img.shields.io/badge/python-3.11-blue) [![License](https://img.shields.io/github/license/RezaManzour/netagent-guard)](LICENSE)
+[![tests](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/RezaManzour/netagent-guard/actions/workflows/tests.yml)
+[![Python 3.11 | 3.12 | 3.13](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)](https://www.python.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![License: MIT](https://img.shields.io/github/license/RezaManzour/netagent-guard)](LICENSE)
+
+**Twin-based counterfactual impact checking for autonomous network-operations agents (MVP, CPU only).**
 
 NetAgent Guard is our entry to the **AI in Telecom** competition: a safety layer that gates every action an LLM
 network-operations agent proposes (rule gateway, intent check, digital-twin consequence check, combined guard),
 evaluated on a synthetic network with prompt-injected and erroneous tickets.
-
-## Setup
-
-```bash
-python -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # fill LLM_BASE_URL and LLM_API_KEY (and LLM_MODEL) only for the optional LLM runs
-```
-
-`.env` is git-ignored; never commit real keys. The offline pipeline and the tests run without any key.
-
-## Run
-
-```bash
-python -m pytest -q tests                       # unit tests (offline)
-python run_all.py                               # tests + full offline evaluation -> results/ and README tables
-LLM_BASE_URL=... LLM_API_KEY=... LLM_MODEL=... python -m netagent_guard.eval_llm   # optional LLM-agent run -> results_v6/
-python -m uvicorn demo.app:app --port 8000      # demo at http://127.0.0.1:8000
-```
 
 ## Key results (copied from results files)
 
@@ -53,30 +39,8 @@ Its false-block rate is higher (6.6% vs 2.3%). With the LLM intent parser instea
 **Caveats:** all data is synthetic; the same authors wrote the twin, oracle and scenarios (residual circularity);
 the `openai__gpt-6-luna` run is **INCOMPLETE** (stopped at an endpoint spend limit; the agent produced actions for only 366 of 1200
 scenarios and no guard evaluation was run; only its intent-extraction accuracy was computed) and must not be used for guard metrics.
-See Limitations below.
+See [Limitations](#limitations-read-before-citing-numbers) below.
 
-## Environment variables
-
-The code reads exactly three environment variables, all only for the optional LLM runs (`netagent_guard/llm.py`):
-`LLM_BASE_URL` (OpenAI-compatible endpoint), `LLM_API_KEY` and `LLM_MODEL`. If one is missing, the LLM paths raise an error
-instead of falling back. No other variables are used. The offline evaluation and the tests need none of them.
-
-## Quick push
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin <URL>
-git push -u origin main
-```
-
----
-
-# NetAgent Guard
-
-Twin-based counterfactual impact checking for autonomous network-operations agents (MVP, CPU only).
 
 ## Problem
 An operations agent reads intents, trouble tickets and telemetry and proposes configuration actions.
@@ -124,12 +88,24 @@ The main offline experiment replays frozen proposed actions and is LLM-independe
 An optional LLM-agent evaluation is reported separately in `results_v6/NOTES.md`; the
 `openai__gpt-6-luna` guard evaluation remains incomplete and is excluded from guard metrics.
 
-## How to run
+## Setup and run
+
+Python 3.11 or newer. Everything except the optional LLM runs works offline on a CPU, without any API key.
+
 ```bash
 python -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env   # only for the optional LLM runs: fill LLM_BASE_URL, LLM_API_KEY and LLM_MODEL
+```
+
+`.env` is git-ignored; never commit real keys.
+
+```bash
+make test           # = python -m pytest -q tests : unit tests (offline)
 make all            # = python run_all.py : tests, full eval, plots, README tables (~1-2 min on CPU)
 make demo           # = uvicorn demo.app:app --port 8000 -> http://127.0.0.1:8000
+make lint           # = ruff check .
+LLM_BASE_URL=... LLM_API_KEY=... LLM_MODEL=... python -m netagent_guard.eval_llm   # optional LLM-agent run -> results_v6/
 ```
 
 ## Regenerate the summary tables (no new experiments)
@@ -290,6 +266,12 @@ Before = first MVP run (`results_mvp1/`: harm v1 only, templated intents, weaker
 Plots: `results/tradeoff_v2.png`, `results/tradeoff_v1.png`, `results/main_bars.png`, `results/noise_ablation.png`.
 <!-- RESULTS:END -->
 
+## Environment variables
+
+The code reads exactly three environment variables, all only for the optional LLM runs (`netagent_guard/llm.py`):
+`LLM_BASE_URL` (OpenAI-compatible endpoint), `LLM_API_KEY` and `LLM_MODEL`. If one is missing, the LLM paths raise an error
+instead of falling back. No other variables are used. The offline evaluation and the tests need none of them.
+
 ## Limitations (read before citing numbers)
 - **Synthetic.** Topology, demands, hidden load/failures, scenarios and attacks are generated; no operator data.
 - **Residual circularity.** v2 removes the shared tolerance rule and adds hidden state, but the same authors wrote
@@ -309,14 +291,16 @@ Plots: `results/tradeoff_v2.png`, `results/tradeoff_v1.png`, `results/main_bars.
 - **G-SPEC** (Vijay & Ethiraj, arXiv:2512.20275): neuro-symbolic governance for agentic AI in 5G. A telecom LLM
   (TSLAM-4B) proposes plans that are validated before execution against a Network Knowledge Graph and SHACL policies
   (topology, resource, state, freshness, and a "blast radius" capacity-change limit) on a simulated hypothetical
-  graph state; evaluated on 500 synthetic scenarios on an Open5GS-based testbed, reporting zero observed violations of
-  the defined ontology. Closest to our rule + structural checks; it validates against declared policies, whereas our
-  twin check estimates KPI consequences.
+  graph state; evaluated on 500 synthetic anomaly scenarios on an Open5GS testbed with a 450-node knowledge graph,
+  reporting zero observed violations of the defined ontology and 94.1% remediation success (paper Sec. 5).
+  Closest to our rule + structural checks; it validates against declared policies, whereas our twin check
+  estimates KPI consequences.
 - **Aether** (Auge et al., Cisco/Swisscom, arXiv:2604.18233): network change validation with five LLM agents (impact
   assessment, test planning, test execution, digital-map query, assistant) on a Network Digital Twin that combines a
   knowledge-graph network map with model-based (Batfish), simulation (NS-3/RouteNet) and other tools; human in the loop.
-  Evaluated on 8 synthetic change scenarios and 2 past ISP incidents (reported 94% error detection, 64% precision
-  on the synthetic set). Aether validates human/automation-authored changes; we gate each agent-proposed action.
+  Evaluated on 8 synthetic change scenarios and 2 past ISP incidents (reported 94% error detection and 64% precision
+  on the synthetic set, paper Table VII; 100% detection on the two incidents). Aether validates
+  human/automation-authored changes; we gate each agent-proposed action.
 - **Progent** (arXiv:2504.11703): programmable privilege control for LLM agents (policy-based tool-call restriction);
   closest to our rule and intent-scope baselines.
 - **LlamaFirewall** (arXiv:2505.03574): open-source guardrail system for agents (prompt-injection detection,
@@ -324,3 +308,17 @@ Plots: `results/tradeoff_v2.png`, `results/tradeoff_v1.png`, `results/main_bars.
 
 NetAgent Guard differs by checking the *consequence* of each proposed action on an approximate network twin
 before execution, combined with cheap structural checks.
+
+## Citing
+
+If you use this code or its results, please cite it with the metadata in [`CITATION.cff`](CITATION.cff)
+(GitHub shows a **Cite this repository** button in the sidebar).
+
+## Contributing and security
+
+Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+Please report security problems privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+Code: [MIT](LICENSE). All data in this repository is synthetic and generated by the code.

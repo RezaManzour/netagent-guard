@@ -1,6 +1,8 @@
 # NetAgent Guard v6 notes
 Run: `LLM_BASE_URL=https://openrouter.ai/api/v1 LLM_MODEL=anthropic/claude-haiku-5.5 python -m netagent_guard.eval_llm`
 (key in LLM_API_KEY). Model anthropic/claude-haiku-5.5, temperature 0, run 2026-10-27, code commit caabdc9 (see run_meta.json).
+Note: the commit ids caabdc9 (here) and 8ef7102 (in run_meta.json) do not exist in this repository's public history,
+because the code was published here as a single "Initial release" commit (6d2e1ee).
 Seeds 0-4 (200 scenarios each), calibration seed 999, twin noise 0.1, bootstrap B=2000 over pooled scenarios.
 Every scenario's action is proposed by the LLM agent from intent+ticket+telemetry (agent_actions.jsonl is the log);
 harm labels are recomputed by the oracle for the LLM's action. Two variants: `keyword_parser/` (guards use the v5
