@@ -85,6 +85,7 @@ def test_intent_unknown_fallback_and_guard_uses_cached_parse():
 
 def test_demo_llm_endpoint_mocked(monkeypatch):
     from fastapi.testclient import TestClient
+
     import demo.app as dapp
     import netagent_guard.llm as L
     body = json.dumps({"thought": "t", "name": "read_kpis", "args": {k: None for k in ["u", "v", "node", "weight", "slice", "factor", "nf"]}})
@@ -97,6 +98,7 @@ def test_demo_llm_endpoint_mocked(monkeypatch):
 
 def test_demo_llm_endpoint_fails_loudly(monkeypatch):
     from fastapi.testclient import TestClient
+
     import demo.app as dapp
     for k in ("LLM_BASE_URL", "LLM_API_KEY", "LLM_MODEL"):
         monkeypatch.delenv(k, raising=False)

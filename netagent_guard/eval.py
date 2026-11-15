@@ -12,8 +12,20 @@ import time
 import numpy as np
 import pandas as pd
 
-from .guards import (ALLOW, BLOCK, DESTRUCTIVE, ESCALATE, CombinedGuard, IntentGuard, NoGuard, RuleGateway,
-                     TwinGuard, audit, parse_accuracy, parse_intent_deterministic)
+from .guards import (
+    ALLOW,
+    BLOCK,
+    DESTRUCTIVE,
+    ESCALATE,
+    CombinedGuard,
+    IntentGuard,
+    NoGuard,
+    RuleGateway,
+    TwinGuard,
+    audit,
+    parse_accuracy,
+    parse_intent_deterministic,
+)
 from .scenarios import _inventory, generate, label_scenarios
 from .twin import perturb_view, twin_kpis
 

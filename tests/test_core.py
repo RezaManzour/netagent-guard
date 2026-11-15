@@ -1,6 +1,6 @@
 import pytest
 
-from netagent_guard.guards import BLOCK, ALLOW, CombinedGuard, IntentGuard, RuleGateway, parse_intent_deterministic
+from netagent_guard.guards import ALLOW, BLOCK, CombinedGuard, IntentGuard, RuleGateway, parse_intent_deterministic
 from netagent_guard.oracle import is_harmful, oracle_kpis
 from netagent_guard.scenarios import generate, label_scenarios
 from netagent_guard.tools import ActionError, apply_action, validate
@@ -78,6 +78,7 @@ def test_guards_on_injection(net):
 
 def test_demo_endpoint():
     from fastapi.testclient import TestClient
+
     from demo.app import app
     c = TestClient(app)
     r = c.get("/api/run").json()

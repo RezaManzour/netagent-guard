@@ -75,7 +75,7 @@ def tables(out_dir="results", before_dir="results_mvp1") -> str:
         L.append(f"| {r['style']} | {r.style_held_out} | {r.n} | {_p(r.parse_action)} | {_p(r.parse_elements)} | {_p(r.parse_slices)} | "
                  f"{_p(r.parse_max_degradation)} | {_p(r.parse_param_range)} | {_p(r.parse_all)} |")
     ag = pd.read_csv(f"{out_dir}/label_agreement.csv")
-    L += ["", f"### Label agreement v1 vs v2 (rows v1, columns v2)", "", "| v1 \\ v2 | False | True |", "|---|---|---|"]
+    L += ["", "### Label agreement v1 vs v2 (rows v1, columns v2)", "", "| v1 \\ v2 | False | True |", "|---|---|---|"]
     for _, r in ag.iterrows():
         L.append(f"| {r.harmful_v1} | {r['False']} | {r['True']} |")
     L += ["", f"v2 harm-reason counts (one scenario can have several): {s['harm_reason_counts_v2']}", ""]

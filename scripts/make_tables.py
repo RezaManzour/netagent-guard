@@ -11,7 +11,6 @@ No experiment is run and no network or LLM call is made: this only reads `result
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import sys
 

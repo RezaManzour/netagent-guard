@@ -1,0 +1,15 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 130
+
+[tool.ruff.lint]
+# pyflakes, import order and the error-level pycodestyle rules.
+# E701/E702 (several statements on one line) are a deliberate compact style in this code base.
+select = ["E4", "E7", "E9", "F", "I"]
+ignore = ["E701", "E702", "E731"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["netagent_guard", "demo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
