@@ -5,6 +5,10 @@ type: software
 authors:
   - family-names: Manzour
     given-names: Reza
+  - family-names: Shirazi
+    given-names: Matin
+  - family-names: Valinejad
+    given-names: Romina
 repository-code: "https://github.com/RezaManzour/netagent-guard"
 license: MIT
 date-released: "2026-10-28"

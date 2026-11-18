@@ -309,6 +309,14 @@ instead of falling back. No other variables are used. The offline evaluation and
 NetAgent Guard differs by checking the *consequence* of each proposed action on an approximate network twin
 before execution, combined with cheap structural checks.
 
+## Team
+
+NetAgent Guard was built as a team entry by:
+
+- Reza Manzour
+- Matin Shirazi
+- Romina Valinejad
+
 ## Citing
 
 If you use this code or its results, please cite it with the metadata in [`CITATION.cff`](CITATION.cff)
