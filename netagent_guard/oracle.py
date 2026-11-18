@@ -8,7 +8,7 @@ from itertools import islice
 
 import networkx as nx
 
-from .twin import NetState, active_graph, demands, ekey, slice_blocked_by_nf, summarize, SLICES
+from .twin import SLICES, NetState, active_graph, demands, ekey, slice_blocked_by_nf, summarize
 
 HARM_TOL = 0.02  # tolerated drop for out-of-scope slices
 
@@ -124,7 +124,7 @@ def independent_harm(before: dict, after: dict, intent: dict) -> tuple[bool, lis
         had = [sl for (s, sl), (d, sv) in before["per_demand"].items() if s == site and sv > 1e-9]
         if had and all(after["per_demand"][(site, sl)][1] <= 1e-9 for sl in had):
             reasons.append(f"H1:{site}")
-    fb, fa = before["served_frac"], after["served_frac"]
+    fb = before["served_frac"]
     # cap served by baseline demand so that demand growth is not counted as delivery gain
     def frac(k, s):
         tot = sum(d for (x, sl), (d, sv) in before["per_demand"].items() if sl == s)

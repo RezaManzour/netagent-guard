@@ -6,7 +6,7 @@ import sys
 
 import pandas as pd
 
-from .eval import CALIB_SEED, N_SCEN, SEEDS
+from .eval import N_SCEN, SEEDS
 from .guards import parse_accuracy, parse_intent_deterministic
 from .scenarios import generate
 

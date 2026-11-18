@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "NetAgent Guard: twin-based counterfactual impact checking for autonomous network-operations agents"
+type: software
+authors:
+  - family-names: Manzour
+    given-names: Reza
+  - family-names: Shirazi
+    given-names: Matin
+  - family-names: Valinejad
+    given-names: Romina
+repository-code: "https://github.com/RezaManzour/netagent-guard"
+license: MIT
+date-released: "2026-10-28"
+keywords:
+  - llm-agents
+  - ai-safety
+  - guardrails
+  - digital-twin
+  - network-operations
+  - telecom
+  - prompt-injection
